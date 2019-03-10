@@ -1,7 +1,4 @@
-// From http://www.redblobgames.com/making-of/line-drawing/
-// Copyright 2017 Red Blob Games <redblobgames@gmail.com>
-// License: Apache v2.0 <http://www.apache.org/licenses/LICENSE-2.0.html>
-console.log(events);
+// console.log(events);
 departments = {}
 for (let i = 0; i < events.length; i++) {
     let key = formatDepartmentName(events[i].Departamento);
@@ -11,33 +8,64 @@ for (let i = 0; i < events.length; i++) {
     }
     departments[key] += 1;
 }
+$('.end').fadeOut(0);
 
-// The fill attribute is set deopending on this function.
-var state = d3.selectAll('path').attr('fill', function(d) {
+function end() {
+    $('.date_label').fadeOut(3000);
+    $('.name').fadeOut(3000);
+    $('.count').fadeOut(3000);
+    setTimeout(function(){$('.end').fadeIn(3000);}, 3000);
+    
 
-    // Get the ID of the path we are currently working with
-    // Our SVG uses the state abbreviation for the ID
-    var abbr = this.id;
+}
 
-    // Loop through the state data looking for
-    // a match for that abbreviation
-    // Then returning the corresponding president
-    // who won that state, from the array we made earlier
-    let event_occurrence = false;
-    $.each(events, function(key, data) {
-        if (data.Departamento == abbr) {
-            event_occurrence = true;
+var i = 0;
+var step_ms = 1;
+
+function myLoop() {
+    setTimeout(function () {
+        if ($(`#${events[i].Departamento}`).hasClass('event')) {
+            // remove event class
+            // Color the department for the event with red
+            setTimeout(function () {
+                if (!events[i]) {
+                    return;
+                }                
+                console.log(events[i].id);
+                d3.select(`#${events[i].Departamento}`)
+                    .transition()
+                    .attr('fill', function (d) {
+                        return 'black';
+                    })
+                    .attr('stroke', function (d) {
+                        return 'black';
+                    });
+            }, step_ms/6);         
         }
-    })
+        // Color the department for the event with red
+        d3.select(`#${events[i].Departamento}`)
+            .transition()
+            .attr('fill', function (d) {
+                return 'red';
+            })
+            .attr('stroke', function (d) {
+                return 'red';
+            });
+        // Populate the UI with details of the event
+        $(`#${events[i].Departamento}`).addClass('event');
+        $('#event_date').text(events[i].Fecha);
+        $('.name').text(events[i].Nombre);
+        $('.count').text(i+1);
+        i++;
+        if (i < events.length) {
+            myLoop();
+        } else {
+            end();
+        }
+    }, step_ms);
+}
 
-    // Return colors
-    // based on data					
-    if (event_occurrence) {
-        return "red";
-    } else {
-        return "black";
-    }
-});
+myLoop();
 
 function formatDepartmentName(departmentName) {
     return removeDiacritics(departmentName).replace(/\s/g, '').toLowerCase();
