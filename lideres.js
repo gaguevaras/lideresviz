@@ -20,7 +20,7 @@ function end() {
 }
 
 var i = 0;
-var step_ms = 1;
+var step_ms = 50;
 
 function myLoop() {
     setTimeout(function () {
