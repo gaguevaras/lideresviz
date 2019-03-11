@@ -15,8 +15,6 @@ function end() {
     $('.name').fadeOut(3000);
     $('.count').fadeOut(3000);
     setTimeout(function(){$('.end').fadeIn(3000);}, 3000);
-    
-
 }
 
 var i = 0;
@@ -30,7 +28,8 @@ function myLoop() {
             setTimeout(function () {
                 if (!events[i]) {
                     return;
-                }                
+                }
+
                 console.log(events[i].id);
                 d3.select(`#${events[i].Departamento}`)
                     .transition()
@@ -40,8 +39,11 @@ function myLoop() {
                     .attr('stroke', function (d) {
                         return 'black';
                     });
-            }, step_ms/6);         
+            }, step_ms / 12);
+
+            // wait half an event
         }
+
         // Color the department for the event with red
         d3.select(`#${events[i].Departamento}`)
             .transition()
@@ -51,11 +53,13 @@ function myLoop() {
             .attr('stroke', function (d) {
                 return 'red';
             });
+
+
         // Populate the UI with details of the event
         $(`#${events[i].Departamento}`).addClass('event');
         $('#event_date').text(events[i].Fecha);
         $('.name').text(events[i].Nombre);
-        $('.count').text(i+1);
+        $('.count').text(i + 1);
         i++;
         if (i < events.length) {
             myLoop();
@@ -63,9 +67,15 @@ function myLoop() {
             end();
         }
     }, step_ms);
+
 }
 
-myLoop();
+window.onkeypress = function (event) {
+    if (event.keyCode == 32) {
+        // do a function
+        myLoop();
+    }
+}
 
 function formatDepartmentName(departmentName) {
     return removeDiacritics(departmentName).replace(/\s/g, '').toLowerCase();
